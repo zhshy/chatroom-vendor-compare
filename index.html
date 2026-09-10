@@ -155,8 +155,8 @@
   <div class="kpis">
     <div class="kpi ok"><div class="v">5 / 5</div><div class="l">可承载 6,000 人/间（即构需扩容）</div></div>
     <div class="kpi bad"><div class="v">4 / 5</div><div class="l">满足「聊天室回调」硬门槛（网易云信标准版不满足）</div></div>
-    <div class="kpi"><div class="v">2,499 元</div><div class="l">满足硬门槛的最低月成本（腾讯云 IM 专业版）</div></div>
-    <div class="kpi ok"><div class="v">0 元</div><div class="l">云审核费（审核改由自有后端承担）</div></div>
+    <div class="kpi"><div class="v">2,499 元</div><div class="l">最低月成本（腾讯云 IM 专业版 · 单室 6,000 人 + DAU 2 万）</div></div>
+    <div class="kpi bad"><div class="v">5,500 元</div><div class="l">最高月成本（融云尊享版 · 同口径）</div></div>
   </div>
 
   <!-- 1 -->
@@ -245,29 +245,36 @@
 
   <!-- 3 -->
   <section>
-    <h2><span class="n">3</span>月度总成本（满足硬门槛的方案）</h2>
-    <p class="hint">审核自建后不再产生云审核费。DAU 峰值 2 万 + 20 个聊天室；条形长度即月度总支出。</p>
-    <div class="legend">
-      <span><i class="s-pkg"></i>套餐费</span>
-      <span><i class="s-dau"></i>DAU 超量费</span>
-      <span><i class="s-cb"></i>回调功能费</span>
-      <span><i class="s-unk"></i>官网未公开</span>
-    </div>
+    <h2><span class="n">3</span>月度总成本（单室 6,000 人 + DAU 2 万）</h2>
+    <p class="hint">审核自建，不再产生云审核费。条形长度即月度总支出，由高到低排列。</p>
     <div class="rows">
-      <div class="row"><div class="name">融云 旗舰版</div>
-        <div class="stack"><span class="s-pkg" style="width:37.5%"></span><span class="s-unk" style="width:0%"></span><span class="s-cb" style="width:25%"></span></div>
-        <div class="total">2,500+<small>DAU 未公开</small></div></div>
-      <div class="row"><div class="name">腾讯云 IM 专业版</div>
-        <div class="stack"><span class="s-pkg" style="width:37.5%"></span><span class="s-dau" style="width:25%"></span></div>
-        <div class="total">2,499<small>回调免费</small></div></div>
+      <div class="row"><div class="name">融云 尊享版</div>
+        <div class="track"><div class="fill bad" style="width:100%"></div></div><div class="val">5,500 元</div></div>
+      <div class="row"><div class="name">网易云信 旗舰版</div>
+        <div class="track"><div class="fill bad" style="width:87.3%"></div></div><div class="val">4,799 元</div></div>
       <div class="row"><div class="name">环信 旗舰版</div>
-        <div class="stack"><span class="s-pkg" style="width:75%"></span><span class="s-dau" style="width:25%"></span></div>
-        <div class="total">3,999<small>含发送前回调</small></div></div>
+        <div class="track"><div class="fill mid" style="width:81.8%"></div></div><div class="val">4,499 元</div></div>
       <div class="row"><div class="name">即构 ZIM 旗舰版</div>
-        <div class="stack"><span class="s-pkg" style="width:75%"></span><span class="s-dau" style="width:25%"></span></div>
-        <div class="total">3,999<small>含自建回调</small></div></div>
+        <div class="track"><div class="fill mid" style="width:72.7%"></div></div><div class="val">3,999 元</div></div>
+      <div class="row"><div class="name">腾讯云 IM 专业版</div>
+        <div class="track"><div class="fill ok" style="width:45.4%"></div></div><div class="val">2,499 元</div></div>
     </div>
-    <p class="hint" style="margin:16px 0 0">注：网易云信因标准套餐不满足「发送前回调」硬门槛，未列入本图。融云套餐 1,500 元 + 消息回调 1,000 元，其 DAU 额度与超量单价官网未公开，无法测算完整总成本。</p>
+    <div class="axis"><div></div><div class="a"><span>0</span><span>3,000</span><span>5,500 元/月</span></div><div></div></div>
+    <div class="tblwrap" style="margin-top:22px">
+      <table>
+        <thead>
+          <tr><th>方案</th><th>单室承载</th><th>月合计</th><th>费用构成 / 口径</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>腾讯云 IM 专业版</td><td>无上限</td><td class="num">2,499</td><td>套餐 1,499 + DAU 超量 1,000（官网公开价）</td></tr>
+          <tr><td>即构 ZIM 旗舰版</td><td><span class="pill p-mid">6,000</span></td><td class="num">3,999</td><td>套餐 2,999 + DAU 超量 1,000（官网公开价）</td></tr>
+          <tr><td>环信 旗舰版</td><td>无上限</td><td class="num">4,499</td><td>商务确认口径（含发送前回调）</td></tr>
+          <tr class="rowgate"><td>网易云信 旗舰版</td><td>无上限</td><td class="num">4,799</td><td>商务确认口径 · 标准套餐不满足发送前回调</td></tr>
+          <tr><td>融云 尊享版</td><td>无上限</td><td class="num">5,500</td><td>商务确认口径（含消息回调等增值服务）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="hint" style="margin:14px 0 0">统一口径：单聊天室 6,000 人同时在线 · DAU 峰值 2 万 · 审核自建（不含云审核费）· 国内数据中心 · 不含商务折扣。腾讯云 / 即构为官网公开报价；环信 / 网易云信 / 融云为商务确认价，未公开逐项构成。</p>
   </section>
 
   <!-- 4 -->
@@ -310,26 +317,27 @@
   <!-- 5 -->
   <section>
     <h2><span class="n">5</span>套餐速查表</h2>
-    <p class="hint">20 个聊天室在以下付费版本中均够用（门槛最低 50 个）；差异在人数上限、DAU 额度与聊天室回调的版本门槛。</p>
+    <p class="hint">20 个聊天室在以下付费版本中均够用（门槛最低 50 个）；差异在单室人数上限与聊天室回调的版本门槛。</p>
     <div class="tblwrap">
       <table>
         <thead>
-          <tr><th>厂商 / 版本</th><th>月费</th><th>聊天室数</th><th>人数上限</th><th>免费 DAU</th><th>DAU 超量</th><th>聊天室回调（发送前）</th></tr>
+          <tr><th>厂商 / 版本</th><th>套餐月费</th><th>聊天室数</th><th>单室人数上限</th><th>聊天室回调（发送前）</th></tr>
         </thead>
         <tbody>
-          <tr><td>腾讯云 IM 专业版</td><td class="num">1,499</td><td>50 个</td><td>无上限</td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-ok">✅ 免费</span></td></tr>
-          <tr><td>腾讯云 IM 旗舰版</td><td class="num">2,999</td><td>无上限</td><td>无上限</td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-ok">✅ 免费</span></td></tr>
-          <tr><td>融云 IM 旗舰版</td><td class="num">1,500</td><td>无上限</td><td>无上限</td><td>未公开</td><td>未公开</td><td><span class="pill p-ok">✅ +1,000 元/月</span></td></tr>
-          <tr><td>环信 IM 专业版</td><td class="num">1,299</td><td>无上限</td><td>无上限</td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-mid">需单独购买</span></td></tr>
-          <tr><td>环信 IM 旗舰版</td><td class="num">2,999</td><td>无上限</td><td>无上限</td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-ok">✅ 含</span></td></tr>
-          <tr class="rowgate"><td>网易云信 高级版</td><td class="num">1,999</td><td>50 个</td><td>无上限</td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-bad">⚠️ 仅专属云</span></td></tr>
-          <tr class="rowgate"><td>网易云信 旗舰版</td><td class="num">3,999</td><td>无限制</td><td>无上限</td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-bad">⚠️ 仅专属云</span></td></tr>
-          <tr><td>即构 ZIM 专业版</td><td class="num">999</td><td>50 个</td><td><span class="pill p-bad">500</span></td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-ok">✅ 含</span></td></tr>
-          <tr><td>即构 ZIM 旗舰版</td><td class="num">2,999</td><td>无上限</td><td><span class="pill p-mid">6,000</span></td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-ok">✅ 含</span></td></tr>
+          <tr><td>腾讯云 IM 专业版</td><td class="num">1,499</td><td>50 个</td><td>无上限</td><td><span class="pill p-ok">✅ 免费</span></td></tr>
+          <tr><td>腾讯云 IM 旗舰版</td><td class="num">2,999</td><td>无上限</td><td>无上限</td><td><span class="pill p-ok">✅ 免费</span></td></tr>
+          <tr><td>融云 IM 旗舰版</td><td class="num">1,500</td><td>无上限</td><td>无上限</td><td><span class="pill p-mid">需加购</span></td></tr>
+          <tr><td>融云 IM 尊享版</td><td class="num">2,500</td><td>无上限</td><td>无上限</td><td><span class="pill p-mid">需加购</span></td></tr>
+          <tr><td>环信 IM 专业版</td><td class="num">1,299</td><td>无上限</td><td>无上限</td><td><span class="pill p-mid">需单独购买</span></td></tr>
+          <tr><td>环信 IM 旗舰版</td><td class="num">2,999</td><td>无上限</td><td>无上限</td><td><span class="pill p-ok">✅ 含</span></td></tr>
+          <tr class="rowgate"><td>网易云信 高级版</td><td class="num">1,999</td><td>50 个</td><td>无上限</td><td><span class="pill p-bad">⚠️ 仅专属云</span></td></tr>
+          <tr class="rowgate"><td>网易云信 旗舰版</td><td class="num">3,999</td><td>无限制</td><td>无上限</td><td><span class="pill p-bad">⚠️ 仅专属云</span></td></tr>
+          <tr><td>即构 ZIM 专业版</td><td class="num">999</td><td>50 个</td><td><span class="pill p-bad">500</span></td><td><span class="pill p-ok">✅ 含</span></td></tr>
+          <tr><td>即构 ZIM 旗舰版</td><td class="num">2,999</td><td>无上限</td><td><span class="pill p-mid">6,000</span></td><td><span class="pill p-ok">✅ 含</span></td></tr>
         </tbody>
       </table>
     </div>
-    <p class="hint" style="margin:12px 0 0">单位：元/月。即构 ZIM 的「人数上限」为单房间并发连接数，与 DAU 不是同一口径。腾讯云 IM 企业版 8,999 元/月（限时 5,999），本场景无必要。</p>
+    <p class="hint" style="margin:12px 0 0">上表为套餐月费，不含 DAU 超量与增值服务；<strong>单室 6,000 人 + DAU 2 万 的完整月成本见第 ③ 节</strong>。腾讯云 IM 企业版 8,999 元/月（限时 5,999），本场景无必要。</p>
   </section>
 
   <!-- 6 -->
@@ -338,12 +346,12 @@
     <div class="verdicts">
       <div class="vd pick"><div class="tag">首选</div><h3>腾讯云 IM 专业版</h3>
         <p>2,499 元/月全场最低 · 直播群原生支持发送前回调，可拦截、回调免费 · 无需额外加购审核或回调模块</p></div>
-      <div class="vd stable"><div class="tag">备选</div><h3>环信 旗舰版 / 融云 旗舰版</h3>
-        <p>发送前回调均支持聊天室 · 环信 3,999 元/月含回调 · 融云 2,500 元/月起但 DAU 额度未公开</p></div>
+      <div class="vd stable"><div class="tag">备选</div><h3>环信 旗舰版</h3>
+        <p>4,499 元/月 · 发送前回调支持聊天室且已含在旗舰版内 · 比腾讯云贵约 80%，适合已有环信技术栈的团队</p></div>
       <div class="vd no"><div class="tag">慎选</div><h3>网易云信 标准套餐</h3>
-        <p>聊天室「发送前」回调仅对专属云客户开放，标准套餐只有发送后抄送 → 无法满足自建审核的硬门槛</p></div>
-      <div class="vd no"><div class="tag">不推荐</div><h3>即构 ZIM 旗舰版</h3>
-        <p>3,999 元/月偏高 · 单房间并发默认 6,000 恰好卡线 · 回调仅覆盖 SDK 发送的消息</p></div>
+        <p>4,799 元/月（旗舰版口径）· 聊天室「发送前」回调仅对专属云开放，标准套餐只有发送后抄送 → 硬门槛不满足</p></div>
+      <div class="vd no"><div class="tag">不推荐</div><h3>融云 尊享版 / 即构 ZIM 旗舰版</h3>
+        <p>融云 5,500 元/月为全场最高，成本翻倍 · 即构单房间并发默认 6,000 恰好卡线，回调仅覆盖 SDK 发送的消息</p></div>
     </div>
   </section>
 
@@ -408,7 +416,7 @@
 
   <footer>
     数据来源：各厂商官网公开文档与价格页，采集时间 2026 年 9 月，国内数据中心口径，未计入商务折扣与促销。<br>
-    测算假设：DAU 峰值 20,000、聊天室 20 个、审核自建（不产生云审核费）、回调仅对客户端 SDK 发送的消息生效。<br>
+    测算假设：单聊天室 6,000 人同时在线、聊天室 20 个、DAU 峰值 20,000、审核自建（不产生云审核费）、回调仅对客户端 SDK 发送的消息生效。<br>
     标签为「未公开 / 仅专属云 / 需单独购买」的项目，官网未披露明确价格或版本范围，需向厂商商务确认；本页不做推测。
   </footer>
 
