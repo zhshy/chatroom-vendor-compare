@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>聊天室方案选型对比看板 · 承载能力 / 成本 / 内容审核</title>
+<style>
+  :root{
+    --primary:#1565C0; --secondary:#0288D1; --accent:#00897B;
+    --warn:#F9A825; --danger:#E53935; --purple:#7B1FA2;
+    --text:#1b2430; --muted:#6b7686; --line:#e3e8ef; --bg:#f6f8fb; --card:#ffffff;
+    --shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px -12px rgba(16,24,40,.18);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:15px; line-height:1.65;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:0 20px 72px}
+
+  /* ---------- header ---------- */
+  header{
+    background:linear-gradient(135deg,#0d47a1 0%,#1565C0 45%,#0288D1 100%);
+    color:#fff; padding:44px 0 40px; margin-bottom:28px;
+  }
+  header .wrap{padding-bottom:0}
+  .eyebrow{font-size:12px; letter-spacing:.18em; opacity:.85; margin:0 0 10px}
+  h1{margin:0 0 12px; font-size:32px; line-height:1.25; font-weight:700}
+  .sub{opacity:.9; max-width:760px; margin:0 0 18px; font-size:15px}
+  .meta{display:flex; flex-wrap:wrap; gap:8px}
+  .chip{background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.28);
+        border-radius:999px; padding:4px 12px; font-size:12.5px}
+
+  /* ---------- kpi ---------- */
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:-58px 0 30px}
+  .kpi{background:var(--card); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow); border-top:3px solid var(--primary)}
+  .kpi .v{font-size:24px; font-weight:700; color:var(--primary); line-height:1.2}
+  .kpi .l{font-size:12.5px; color:var(--muted)}
+  .kpi.warn{border-top-color:var(--warn)} .kpi.warn .v{color:#c88a00}
+  .kpi.ok{border-top-color:var(--accent)} .kpi.ok .v{color:var(--accent)}
+
+  /* ---------- section / card ---------- */
+  section{background:var(--card); border-radius:14px; padding:24px 24px 22px; margin-bottom:20px; box-shadow:var(--shadow)}
+  h2{font-size:19px; margin:0 0 4px; display:flex; align-items:center; gap:10px}
+  h2 .n{display:inline-flex; width:26px; height:26px; border-radius:8px; background:var(--primary); color:#fff;
+        font-size:13.5px; align-items:center; justify-content:center; font-weight:700; flex:none}
+  .hint{color:var(--muted); font-size:13px; margin:0 0 20px}
+  .legend{display:flex; flex-wrap:wrap; gap:16px; margin:0 0 18px; font-size:12.5px; color:var(--muted)}
+  .legend i{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px}
+
+  /* ---------- horizontal bar chart ---------- */
+  .rows{display:flex; flex-direction:column; gap:11px}
+  .row{display:grid; grid-template-columns:132px 1fr 74px; align-items:center; gap:12px}
+  .row .name{font-size:13px; text-align:right; color:#31405a; font-weight:600}
+  .track{position:relative; height:24px; background:#eef2f8; border-radius:6px; overflow:hidden}
+  .fill{height:100%; border-radius:6px; background:var(--primary)}
+  .fill.ok{background:linear-gradient(90deg,#00897B,#26a69a)}
+  .fill.mid{background:linear-gradient(90deg,#F9A825,#ffca28)}
+  .fill.bad{background:linear-gradient(90deg,#E53935,#ef5350)}
+  .fill.mute{background:linear-gradient(90deg,#90a4ae,#b0bec5)}
+  .val{font-size:13px; font-weight:700; color:#31405a; text-align:right}
+  .refline{position:absolute; top:0; bottom:0; left:50%; width:0; border-left:2px dashed var(--danger); opacity:.8}
+  .axis{display:grid; grid-template-columns:132px 1fr 74px; gap:12px; font-size:11.5px; color:#9aa6b8; margin-top:2px}
+  .axis .a{display:flex; justify-content:space-between; position:relative}
+  .axis .mark{position:absolute; left:50%; transform:translateX(-50%); color:var(--danger); font-weight:700}
+
+  /* ---------- stacked cost chart ---------- */
+  .stack{display:flex; height:26px; border-radius:6px; overflow:hidden; background:#eef2f8}
+  .stack span{display:block; height:100%}
+  .s-pkg{background:var(--primary)} .s-dau{background:var(--warn)} .s-audit{background:var(--accent)}
+  .total{font-size:13.5px; font-weight:700; text-align:right; white-space:nowrap}
+  .total small{display:block; font-weight:400; color:var(--muted); font-size:11.5px}
+
+  /* ---------- svg chart ---------- */
+  .svgbox{width:100%; overflow:hidden}
+  svg{width:100%; height:auto; display:block}
+
+  /* ---------- table ---------- */
+  .tblwrap{overflow-x:auto}
+  table{width:100%; border-collapse:collapse; font-size:13px; min-width:720px}
+  th{background:#eef3fa; color:#22304a; text-align:left; padding:10px 12px; font-weight:700; border-bottom:1px solid var(--line); white-space:nowrap}
+  td{padding:9px 12px; border-bottom:1px solid var(--line); color:#33415c}
+  tbody tr:hover{background:#fafcff}
+  td.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .pill{display:inline-block; padding:1px 9px; border-radius:999px; font-size:11.5px; font-weight:700}
+  .p-ok{background:#e6f6f2; color:#00736a} .p-mid{background:#fff6e0; color:#a17200} .p-bad{background:#fdeaea; color:#c62828}
+
+  /* ---------- verdict ---------- */
+  .verdicts{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  .vd{border-radius:12px; padding:16px; border:1px solid var(--line); background:#fbfcfe}
+  .vd .tag{font-size:11.5px; font-weight:700; letter-spacing:.06em}
+  .vd h3{margin:6px 0 4px; font-size:15.5px}
+  .vd p{margin:0; font-size:13px; color:var(--muted)}
+  .vd.pick{border-color:#bfe3dc; background:#f2fbf9} .vd.pick .tag{color:var(--accent)}
+  .vd.stable{border-color:#cfe0f5; background:#f5f9ff} .vd.stable .tag{color:var(--primary)}
+  .vd.no{border-color:#f3dede; background:#fdf7f7} .vd.no .tag{color:var(--danger)}
+
+  /* ---------- links ---------- */
+  .groups{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+  .grp{border:1px solid var(--line); border-radius:12px; padding:14px 16px; background:#fbfcfe}
+  .grp h4{margin:0 0 10px; font-size:14px; display:flex; align-items:center; gap:8px}
+  .dot{width:9px; height:9px; border-radius:50%; flex:none}
+  .links{list-style:none; margin:0; padding:0}
+  .links li{margin-bottom:7px}
+  .links a{color:var(--primary); text-decoration:none; font-size:13px; border-bottom:1px dashed #c7d7ea}
+  .links a:hover{color:#0d47a1; border-bottom-color:var(--primary)}
+  .links .d{color:#9aa6b8; font-size:11.5px; margin-left:6px}
+
+  footer{color:var(--muted); font-size:12.5px; padding:8px 4px 0; line-height:1.8}
+  @media (max-width:860px){
+    .kpis{grid-template-columns:repeat(2,1fr); margin-top:-40px}
+    .verdicts,.groups{grid-template-columns:1fr}
+    .row,.axis{grid-template-columns:96px 1fr 62px}
+    h1{font-size:25px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">即时通讯技术选型</p>
+    <h1>聊天室方案对比看板</h1>
+    <p class="sub">评估场景：DAU 峰值 2 万 · 20 个聊天室 · 单聊天室 6,000 人同时在线。对比腾讯云 IM、融云、网易云信、环信、即构 ZIM。</p>
+    <div class="meta">
+      <span class="chip">数据口径：2026-09 官网公开报价</span>
+      <span class="chip">国内数据中心</span>
+      <span class="chip">不含商务折扣</span>
+      <span class="chip">审核按 300 万条文本/月测算</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="kpis">
+    <div class="kpi ok"><div class="v">5 / 5</div><div class="l">可承载 6,000 人的方案数（即构需扩容）</div></div>
+    <div class="kpi"><div class="v">2,999 元</div><div class="l">最低可行月成本（网易云信高级版）</div></div>
+    <div class="kpi warn"><div class="v">1,000 元</div><div class="l">DAU 超量费（2 万 DAU 必触发）</div></div>
+    <div class="kpi warn"><div class="v">×4</div><div class="l">人均 10 条/天时审核费 vs 套餐费</div></div>
+  </div>
+
+  <!-- 1 -->
+  <section>
+    <h2><span class="n">1</span>单聊天室承载能力</h2>
+    <p class="hint">红色虚线 = 6,000 人需求线。凡越过虚线的方案均满足需求；即构 ZIM 需扩容才可用。</p>
+    <div class="rows">
+      <div class="row"><div class="name">腾讯云 IM</div>
+        <div class="track"><div class="fill ok" style="width:100%"></div></div><div class="val">无上限</div></div>
+      <div class="row"><div class="name">融云</div>
+        <div class="track"><div class="fill ok" style="width:100%"></div></div><div class="val">无上限</div></div>
+      <div class="row"><div class="name">网易云信</div>
+        <div class="track"><div class="fill ok" style="width:100%"></div></div><div class="val">无上限</div></div>
+      <div class="row"><div class="name">环信</div>
+        <div class="track"><div class="fill ok" style="width:100%"></div></div><div class="val">无上限</div></div>
+      <div class="row"><div class="name">即构 ZIM 旗舰版</div>
+        <div class="track"><div class="fill mid" style="width:50%"></div><span class="refline"></span></div><div class="val">6,000</div></div>
+      <div class="row"><div class="name">即构 ZIM 专业版</div>
+        <div class="track"><div class="fill bad" style="width:4.2%"></div><span class="refline"></span></div><div class="val">500</div></div>
+    </div>
+    <div class="axis"><div></div><div class="a"><span>0</span><span class="mark">6,000</span><span>12,000+</span></div><div></div></div>
+    <p class="hint" style="margin:16px 0 0">注：腾讯云侧指的是「直播群 AvChatRoom」；若按普通群下单，成员上限专业版仅 200 人，需企业版才到 6,000 人。</p>
+  </section>
+
+  <!-- 2 -->
+  <section>
+    <h2><span class="n">2</span>月度总成本对比</h2>
+    <p class="hint">DAU 峰值 2 万 + 20 个聊天室 + 审核 300 万条文本/月。条形长度即月度总支出。</p>
+    <div class="legend">
+      <span><i class="s-pkg"></i>套餐费</span>
+      <span><i class="s-dau"></i>DAU 超量费</span>
+      <span><i class="s-audit"></i>内容审核费</span>
+    </div>
+    <div class="rows">
+      <div class="row"><div class="name">网易云信 高级版</div>
+        <div class="stack"><span class="s-pkg" style="width:22.2%"></span><span class="s-dau" style="width:11.1%"></span></div>
+        <div class="total">2,999<small>审核已含</small></div></div>
+      <div class="row"><div class="name">环信 专业版</div>
+        <div class="stack"><span class="s-pkg" style="width:14.4%"></span><span class="s-dau" style="width:11.1%"></span><span style="width:10%;background:repeating-linear-gradient(45deg,#dfe6ee,#dfe6ee 4px,#f2f5f9 4px,#f2f5f9 8px)"></span></div>
+        <div class="total">2,299+<small>审核待报价</small></div></div>
+      <div class="row"><div class="name">腾讯云 IM 专业版<br><span style="font-weight:400;color:#9aa6b8;font-size:11.5px">+ 第三方审核</span></div>
+        <div class="stack"><span class="s-pkg" style="width:16.7%"></span><span class="s-dau" style="width:11.1%"></span><span class="s-audit" style="width:26.7%"></span></div>
+        <div class="total">4,899<small>需自建前回调</small></div></div>
+      <div class="row"><div class="name">网易云信 旗舰版</div>
+        <div class="stack"><span class="s-pkg" style="width:44.4%"></span><span class="s-dau" style="width:11.1%"></span></div>
+        <div class="total">4,999<small>审核已含</small></div></div>
+      <div class="row"><div class="name">腾讯云 IM 专业版<br><span style="font-weight:400;color:#9aa6b8;font-size:11.5px">+ 云端审核</span></div>
+        <div class="stack"><span class="s-pkg" style="width:16.7%"></span><span class="s-dau" style="width:11.1%"></span><span class="s-audit" style="width:32.2%"></span></div>
+        <div class="total">5,399<small>零开发</small></div></div>
+      <div class="row"><div class="name">即构 ZIM 旗舰版</div>
+        <div class="stack"><span class="s-pkg" style="width:33.3%"></span><span class="s-dau" style="width:11.1%"></span><span class="s-audit" style="width:50%"></span></div>
+        <div class="total">8,499<small>成本最高</small></div></div>
+    </div>
+    <p class="hint" style="margin:16px 0 0">注：融云旗舰版 1,500 元/月，未公开 DAU 额度与审核单价，无法测算完整总成本，故未列入上图。</p>
+  </section>
+
+  <!-- 3 -->
+  <section>
+    <h2><span class="n">3</span>审核费随消息量变化</h2>
+    <p class="hint">真正的成本变量不是「多少人」，而是「人均发多少条」。灰色虚线为腾讯云 IM 专业版套餐费 1,499 元。</p>
+    <div class="legend">
+      <span><i style="background:#E53935"></i>腾讯云云端审核</span>
+      <span><i style="background:#7B1FA2"></i>即构 ZIM（数美）</span>
+      <span><i style="background:#00897B"></i>网易云信（含在套餐内）</span>
+    </div>
+    <div class="svgbox">
+      <svg viewBox="0 0 680 300" role="img" aria-label="审核费用随人均消息量的变化折线图">
+        <!-- grid -->
+        <g stroke="#e8edf4" stroke-width="1">
+          <line x1="70" y1="250" x2="640" y2="250"/>
+          <line x1="70" y1="180" x2="640" y2="180"/>
+          <line x1="70" y1="110" x2="640" y2="110"/>
+          <line x1="70" y1="40"  x2="640" y2="40"/>
+        </g>
+        <!-- y labels -->
+        <g fill="#9aa6b8" font-size="11" text-anchor="end" font-family="sans-serif">
+          <text x="60" y="254">0 元</text>
+          <text x="60" y="184">3,000</text>
+          <text x="60" y="114">6,000</text>
+          <text x="60" y="44">9,000</text>
+        </g>
+        <!-- package fee ref -->
+        <line x1="70" y1="215" x2="640" y2="215" stroke="#b6c0cd" stroke-width="1.5" stroke-dasharray="6 5"/>
+        <text x="636" y="209" fill="#8b97a8" font-size="11" text-anchor="end" font-family="sans-serif">套餐费 1,499 元</text>
+
+        <!-- 即构 数美 -->
+        <polyline fill="none" stroke="#7B1FA2" stroke-width="2.6" stroke-linejoin="round"
+                  points="120,208 355,145 590,40"/>
+        <g fill="#7B1FA2">
+          <circle cx="120" cy="208" r="4.5"/><circle cx="355" cy="145" r="4.5"/><circle cx="590" cy="40" r="4.5"/>
+        </g>
+        <g fill="#7B1FA2" font-size="11.5" font-weight="700" text-anchor="middle" font-family="sans-serif">
+          <text x="120" y="198">1,800</text><text x="355" y="135">4,500</text><text x="590" y="30">9,000</text>
+        </g>
+
+        <!-- 腾讯云 -->
+        <polyline fill="none" stroke="#E53935" stroke-width="3" stroke-linejoin="round"
+                  points="120,224 355,182 590,112"/>
+        <g fill="#E53935">
+          <circle cx="120" cy="224" r="5"/><circle cx="355" cy="182" r="5"/><circle cx="590" cy="112" r="5"/>
+        </g>
+        <g fill="#E53935" font-size="11.5" font-weight="700" text-anchor="middle" font-family="sans-serif">
+          <text x="120" y="240">1,100</text><text x="355" y="199">2,900</text><text x="590" y="129">5,900</text>
+        </g>
+
+        <!-- 网易云信 0 -->
+        <polyline fill="none" stroke="#00897B" stroke-width="2.6" points="120,250 355,250 590,250"/>
+        <g fill="#00897B" font-size="11.5" font-weight="700" text-anchor="middle" font-family="sans-serif">
+          <text x="355" y="266">0 元（已含在套餐内，不随消息量变化）</text>
+        </g>
+
+        <!-- x labels -->
+        <g fill="#6b7686" font-size="12" text-anchor="middle" font-family="sans-serif">
+          <text x="120" y="288">2 条/人/天</text>
+          <text x="355" y="288">5 条/人/天</text>
+          <text x="590" y="288">10 条/人/天</text>
+        </g>
+      </svg>
+    </div>
+    <p class="hint" style="margin:8px 0 0">腾讯云云端审核：1,000 元/月含 110 万次，超量 0.0010 元/次。人均 10 条时审核费已达套餐费近 4 倍。</p>
+  </section>
+
+  <!-- 4 -->
+  <section>
+    <h2><span class="n">4</span>内容审核自定义自由度</h2>
+    <p class="hint">「能不能换成我自己的审核系统」——这决定了审核引擎是否可替换、策略是否自主可控。</p>
+    <div class="rows">
+      <div class="row"><div class="name">融云</div>
+        <div class="track"><div class="fill ok" style="width:94%"></div></div><div class="val">高</div></div>
+      <div class="row"><div class="name">网易云信</div>
+        <div class="track"><div class="fill ok" style="width:94%"></div></div><div class="val">高</div></div>
+      <div class="row"><div class="name">环信</div>
+        <div class="track"><div class="fill ok" style="width:94%"></div></div><div class="val">高</div></div>
+      <div class="row"><div class="name">腾讯云 IM</div>
+        <div class="track"><div class="fill mid" style="width:58%"></div></div><div class="val">中</div></div>
+      <div class="row"><div class="name">即构 ZIM</div>
+        <div class="track"><div class="fill bad" style="width:24%"></div></div><div class="val">低</div></div>
+    </div>
+    <p class="hint" style="margin:16px 0 0">
+      <strong>融云</strong> 消息回调 + 按用户分级的自定义事件审核 ·
+      <strong>网易云信</strong> 消息抄送 / 回调对接自有系统 ·
+      <strong>环信</strong> 旗舰版发送前回调（自定义拦截、放行）<br>
+      <strong>腾讯云 IM</strong> 云端审核锁定腾讯天御；换供应商只能走「群内发言之前回调」——默认 2 秒超时不可调，官方提示时延至少翻倍 ·
+      <strong>即构 ZIM</strong> 内置数美，策略固定，调整需提工单
+    </p>
+  </section>
+
+  <!-- 5 -->
+  <section>
+    <h2><span class="n">5</span>套餐速查表</h2>
+    <p class="hint">20 个聊天室在以下所有版本中均够用（门槛最低 50 个）；差异在人数上限与 DAU 额度。</p>
+    <div class="tblwrap">
+      <table>
+        <thead>
+          <tr><th>厂商 / 版本</th><th>月费</th><th>聊天室数</th><th>人数上限</th><th>免费 DAU</th><th>DAU 超量</th><th>自定义审核</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>腾讯云 IM 专业版</td><td class="num">1,499</td><td>50 个</td><td>无上限</td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-mid">中</span></td></tr>
+          <tr><td>腾讯云 IM 旗舰版</td><td class="num">2,999</td><td>无上限</td><td>无上限</td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-mid">中</span></td></tr>
+          <tr><td>融云 IM 旗舰版</td><td class="num">1,500</td><td>无上限</td><td>无上限</td><td>未公开</td><td>未公开</td><td><span class="pill p-ok">高</span></td></tr>
+          <tr><td>融云 IM 尊享版</td><td class="num">2,500</td><td>无上限</td><td>无上限</td><td>未公开</td><td>未公开</td><td><span class="pill p-ok">高</span></td></tr>
+          <tr><td>网易云信 2024 高级版</td><td class="num">1,999</td><td>50 个</td><td>无上限</td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-ok">高</span></td></tr>
+          <tr><td>网易云信 2024 旗舰版</td><td class="num">3,999</td><td>无限制</td><td>无上限</td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-ok">高</span></td></tr>
+          <tr><td>环信 IM 专业版</td><td class="num">1,299</td><td>无上限</td><td>无上限</td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-ok">高</span><br><span style="font-size:11px;color:#9aa6b8">需旗舰版</span></td></tr>
+          <tr><td>环信 IM 旗舰版</td><td class="num">2,999</td><td>无上限</td><td>无上限</td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-ok">高</span></td></tr>
+          <tr><td>即构 ZIM 专业版</td><td class="num">999</td><td>50 个</td><td><span class="pill p-bad">500</span></td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-bad">低</span></td></tr>
+          <tr><td>即构 ZIM 旗舰版</td><td class="num">2,999</td><td>无上限</td><td><span class="pill p-mid">6,000</span></td><td class="num">10,000</td><td class="num">1,000 / 万</td><td><span class="pill p-bad">低</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="hint" style="margin:12px 0 0">单位：元/月。即构 ZIM 的「人数上限」为单房间并发连接数，与 DAU 不是同一口径。腾讯云 IM 企业版 8,999 元/月（限时 5,999），本场景无必要。</p>
+  </section>
+
+  <!-- 6 -->
+  <section>
+    <h2><span class="n">6</span>选型结论</h2>
+    <div class="verdicts">
+      <div class="vd pick"><div class="tag">首选</div><h3>网易云信 2024 高级版</h3>
+        <p>2,999 元/月起 · 审核已含在套餐内 · 50 个聊天室 · 人数无上限 · 支持自有审核系统对接</p></div>
+      <div class="vd stable"><div class="tag">稳妥</div><h3>腾讯云 IM 专业版</h3>
+        <p>2,499 元/月 + 云端审核 2,900 元 · 零开发上线快 · 但直播群不支持撤回消息、不能移除成员</p></div>
+      <div class="vd no"><div class="tag">不推荐</div><h3>即构 ZIM 旗舰版</h3>
+        <p>8,499 元/月为全场最高 · 单房间并发默认 6,000 恰好卡线 · 审核策略固定不可换</p></div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section>
+    <h2><span class="n">7</span>各家官方成本 / 价格页</h2>
+    <p class="hint">以下为各厂商官网计费与价格入口，建议以官网实时报价与商务确认为准。</p>
+    <div class="groups">
+
+      <div class="grp">
+        <h4><span class="dot" style="background:#1565C0"></span>腾讯云 IM</h4>
+        <ul class="links">
+          <li><a href="https://cloud.tencent.com/document/product/454/7912" target="_blank" rel="noopener">计费概述</a><span class="d">计费组成总览</span></li>
+          <li><a href="https://cloud.tencent.com/document/product/460/81908" target="_blank" rel="noopener">基础服务计费说明</a><span class="d">套餐包 / DAU / 群组超量</span></li>
+          <li><a href="https://cloud.tencent.com/document/product/1323/95718" target="_blank" rel="noopener">增值服务计费说明</a><span class="d">含云端审核资费</span></li>
+          <li><a href="https://cloud.tencent.com.cn/act/pro/imnew" target="_blank" rel="noopener">IM 购买页（活动价）</a><span class="d">首购 1 折 / 续费 9 折</span></li>
+        </ul>
+      </div>
+
+      <div class="grp">
+        <h4><span class="dot" style="background:#E53935"></span>融云 RongCloud</h4>
+        <ul class="links">
+          <li><a href="https://www.rongcloud.cn/pricing" target="_blank" rel="noopener">IM 价格与功能对比</a><span class="d">旗舰版 / 尊享版</span></li>
+        </ul>
+      </div>
+
+      <div class="grp">
+        <h4><span class="dot" style="background:#00897B"></span>网易云信</h4>
+        <ul class="links">
+          <li><a href="https://netease.im/price/live/" target="_blank" rel="noopener">价格详情与计算器</a><span class="d">2024 各版本套餐</span></li>
+          <li><a href="https://netease.im/im" target="_blank" rel="noopener">IM 产品与价格页</a><span class="d">含内容安全审核能力说明</span></li>
+        </ul>
+      </div>
+
+      <div class="grp">
+        <h4><span class="dot" style="background:#7B1FA2"></span>环信 Easemob</h4>
+        <ul class="links">
+          <li><a href="https://kb.easemob.com/product/im" target="_blank" rel="noopener">IM 套餐与配额</a><span class="d">专业版 / 旗舰版</span></li>
+        </ul>
+      </div>
+
+      <div class="grp">
+        <h4><span class="dot" style="background:#F9A825"></span>即构 ZEGO</h4>
+        <ul class="links">
+          <li><a href="https://doc-zh.zego.im/zim-miniprogram/introduction/pricing" target="_blank" rel="noopener">ZIM 计费说明</a><span class="d">版本费 / 增值 / 内容审核单价</span></li>
+          <li><a href="https://www.zegotech.cn/product/InstantMessage" target="_blank" rel="noopener">即时通讯产品价格页</a><span class="d">专业版 / 旗舰版</span></li>
+        </ul>
+      </div>
+
+      <div class="grp">
+        <h4><span class="dot" style="background:#6b7686"></span>第三方内容审核（可选）</h4>
+        <ul class="links">
+          <li><a href="https://dun.163.com" target="_blank" rel="noopener">网易易盾</a><span class="d">文本约 0.008 元/次</span></li>
+          <li><a href="https://cloud.tencent.com/product/cms" target="_blank" rel="noopener">腾讯云天御内容安全</a><span class="d">IM 云端审核底层引擎</span></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    数据来源：各厂商官网公开文档与价格页，采集时间 2026 年 9 月，国内数据中心口径，未计入商务折扣与促销。<br>
+    测算假设：DAU 峰值 20,000、聊天室 20 个、审核用量 300 万条文本/月（人均 5 条 × 2 万 DAU × 30 天）。<br>
+    标签为「未公开 / 待报价」的项目，官网未披露单价，需向厂商商务确认；本页不做推测。
+  </footer>
+
+</div>
+</body>
+</html>
